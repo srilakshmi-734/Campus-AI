@@ -209,7 +209,6 @@ export default function RoleSelectPage() {
                     transition={{ delay: 0.7 }}
                     className="text-center text-xs text-gray-600 mt-10"
                 >
-                    Anna University · College of Engineering, Guindy · Demo Mode
                 </motion.p>
             </div>
         </div>
