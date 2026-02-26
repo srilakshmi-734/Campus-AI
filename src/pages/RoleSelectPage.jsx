@@ -98,9 +98,9 @@ export default function RoleSelectPage() {
 
                     <h1 className="text-5xl md:text-6xl font-black mb-6">
                         The Intelligent Core of Modern Campus Management{" "}
-                        <span className="bg-gradient-to-r from-violet-400 to-orange-400 bg-clip-text text-transparent">
-                            AI Intelligence
-                        </span>
+                        {/* <span className="bg-gradient-to-r from-violet-400 to-orange-400 bg-clip-text text-transparent">
+              AI Intelligence
+            </span> */}
                     </h1>
 
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-10">
