@@ -37,8 +37,8 @@ function NavItem({ item, t }) {
     return (
         <NavLink to={item.path}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${isActive
-                    ? 'text-white'
-                    : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/8'
+                ? 'text-white'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/8'
                 }`}
             style={isActive ? { background: 'linear-gradient(135deg, rgba(124,58,237,0.4), rgba(249,115,22,0.2))', boxShadow: '0 0 12px rgba(124,58,237,0.3)' } : {}}
         >
@@ -70,11 +70,28 @@ export default function Navbar({ onMenuToggle, sidebarCollapsed, onSidebarToggle
         navigate('/');
     };
 
-    const notifications = [
-        { id: 1, text: '3 students below 75% attendance', type: 'warn', time: '2m ago' },
-        { id: 2, text: 'Fee collection deadline tomorrow', type: 'danger', time: '1h ago' },
-        { id: 3, text: 'Lab booking approved', type: 'success', time: '3h ago' },
+    const adminNotifications = [
+        { id: 1, text: '3 students below 75% attendance', type: 'warn', time: '2m ago', read: false },
+        { id: 2, text: 'Fee collection deadline tomorrow', type: 'danger', time: '1h ago', read: false },
+        { id: 3, text: 'Lab booking approved', type: 'success', time: '3h ago', read: false },
     ];
+
+    const studentNotifications = [
+        { id: 1, text: 'Math III assignment due in 4 hours', type: 'warn', time: '10m ago', read: false },
+        { id: 2, text: 'Attendance updated: 88.5% overall', type: 'success', time: '1h ago', read: false },
+        { id: 3, text: 'New Event: Hackathon registration open', type: 'info', time: '3h ago', read: false },
+    ];
+
+    const [notifications, setNotifications] = useState(
+        role === 'admin' ? adminNotifications : studentNotifications
+    );
+
+    const unreadCount = notifications.filter(n => !n.read).length;
+
+    const markAllRead = () => {
+        setNotifications(notifications.map(n => ({ ...n, read: true })));
+    };
+
 
     return (
         <motion.header
@@ -88,12 +105,14 @@ export default function Navbar({ onMenuToggle, sidebarCollapsed, onSidebarToggle
             <div className="flex items-center gap-2 flex-1 min-w-0">
                 {/* Mobile hamburger */}
                 <button onClick={onMenuToggle}
+                    aria-label="Open mobile menu"
                     className="p-2 rounded-lg hover:bg-white/10 transition-colors text-[var(--text-muted)] md:hidden shrink-0">
                     <Menu size={20} />
                 </button>
 
                 {/* Desktop collapse toggle */}
                 <button onClick={onSidebarToggle}
+                    aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
                     className="hidden md:flex p-2 rounded-lg hover:bg-white/10 transition-colors text-[var(--text-muted)] hover:text-[var(--text-primary)] shrink-0">
                     <Menu size={18} />
                 </button>
@@ -131,6 +150,8 @@ export default function Navbar({ onMenuToggle, sidebarCollapsed, onSidebarToggle
                 {/* Language */}
                 <div className="relative">
                     <button onClick={() => { setLangOpen(o => !o); setNotifOpen(false); }}
+                        aria-label="Change language"
+                        aria-expanded={langOpen}
                         className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs hover:bg-white/10 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all">
                         <Globe size={15} />
                         <span className="hidden sm:block">{i18n.language === 'ta' ? 'தமிழ்' : 'EN'}</span>
@@ -156,46 +177,58 @@ export default function Navbar({ onMenuToggle, sidebarCollapsed, onSidebarToggle
                     </AnimatePresence>
                 </div>
 
+                {/* Notifications */}
+                <div className="relative">
+                    <button onClick={() => { setNotifOpen(o => !o); setLangOpen(false); }}
+                        aria-label="View notifications"
+                        aria-expanded={notifOpen}
+                        className="relative p-2 rounded-lg hover:bg-white/10 transition-colors text-[var(--text-muted)] hover:text-[var(--text-primary)]">
+                        <Bell size={17} />
+                        {unreadCount > 0 && <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-violet-500 rounded-full shadow-[0_0_5px_#8b5cf6]" />}
+                    </button>
+                    <AnimatePresence>
+                        {notifOpen && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 6, scale: 0.95 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: 6, scale: 0.95 }}
+                                transition={{ duration: 0.15 }}
+                                className="absolute right-0 top-12 glass-card w-72 overflow-hidden z-50 shadow-xl border border-white/10"
+                            >
+                                <div className="px-4 py-3 border-b border-white/10 flex justify-between items-center bg-white/2">
+                                    <p className="font-black text-xs uppercase tracking-widest">Notifications</p>
+                                    <button onClick={markAllRead} className="text-[10px] font-black text-violet-400 hover:text-violet-300 uppercase">Mark all read</button>
+                                </div>
+                                <div className="max-h-80 overflow-y-auto overflow-x-hidden">
+                                    {notifications.length > 0 ? notifications.map(n => (
+                                        <div key={n.id} className={`flex items-start gap-3 px-4 py-3 hover:bg-white/5 cursor-pointer transition-colors border-b border-white/5 last:border-0 ${n.read ? 'opacity-40' : ''}`}>
+                                            <div className={`w-2 h-2 mt-1.5 rounded-full shrink-0 shadow-sm ${n.type === 'warn' ? 'bg-amber-400 shadow-amber-400/50' :
+                                                    n.type === 'danger' ? 'bg-rose-500 shadow-rose-500/50' :
+                                                        n.type === 'success' ? 'bg-emerald-400 shadow-emerald-400/50' :
+                                                            'bg-sky-400 shadow-sky-400/50'
+                                                }`} />
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-[11px] font-medium text-[var(--text-primary)] leading-relaxed">{n.text}</p>
+                                                <p className="text-[9px] font-black text-[var(--text-muted)] mt-1 uppercase tracking-tighter opacity-70 italic">{n.time}</p>
+                                            </div>
+                                        </div>
+                                    )) : (
+                                        <div className="py-10 text-center">
+                                            <p className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest">All caught up! ✨</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+
                 {/* Theme */}
                 <motion.button whileTap={{ scale: 0.85, rotate: 180 }} onClick={toggleTheme}
+                    aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
                     className="p-2 rounded-lg hover:bg-white/10 transition-colors text-[var(--text-muted)] hover:text-amber-400">
                     {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
                 </motion.button>
-
-                {/* Notifications (admin) */}
-                {role === 'admin' && (
-                    <div className="relative">
-                        <button onClick={() => { setNotifOpen(o => !o); setLangOpen(false); }}
-                            className="relative p-2 rounded-lg hover:bg-white/10 transition-colors text-[var(--text-muted)] hover:text-[var(--text-primary)]">
-                            <Bell size={17} />
-                            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full" />
-                        </button>
-                        <AnimatePresence>
-                            {notifOpen && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: 6, scale: 0.95 }}
-                                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                                    exit={{ opacity: 0, y: 6, scale: 0.95 }}
-                                    transition={{ duration: 0.15 }}
-                                    className="absolute right-0 top-12 glass-card w-72 overflow-hidden z-50 shadow-xl"
-                                >
-                                    <div className="px-4 py-3 border-b border-white/10">
-                                        <p className="font-semibold text-sm">Notifications</p>
-                                    </div>
-                                    {notifications.map(n => (
-                                        <div key={n.id} className="flex items-start gap-3 px-4 py-3 hover:bg-white/5 cursor-pointer">
-                                            <div className={`w-2 h-2 mt-1.5 rounded-full shrink-0 ${n.type === 'warn' ? 'bg-yellow-400' : n.type === 'danger' ? 'bg-red-500' : 'bg-green-500'}`} />
-                                            <div>
-                                                <p className="text-xs text-[var(--text-primary)]">{n.text}</p>
-                                                <p className="text-[10px] text-[var(--text-muted)] mt-0.5">{n.time}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-                    </div>
-                )}
 
                 {/* Divider */}
                 <div className="w-px h-6 bg-white/10 mx-1" />

@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import {
     LayoutDashboard, Users, GraduationCap, BookOpen,
     CalendarCheck, CreditCard, BarChart3, Package,
-    Settings, Brain, X,
+    Settings, Brain, X
 } from 'lucide-react';
 
 const adminNav = [
@@ -35,7 +35,7 @@ function SidebarItem({ item, collapsed, t }) {
     const isActive = location.pathname === item.path;
 
     return (
-        <NavLink to={item.path} title={collapsed ? t(item.key) : undefined}>
+        <NavLink to={item.path} title={collapsed ? t(item.key) : undefined} aria-label={t(item.key)}>
             <motion.div
                 whileHover={{ x: collapsed ? 0 : 3 }}
                 whileTap={{ scale: 0.96 }}
@@ -139,6 +139,7 @@ export default function Sidebar({ collapsed, mobileOpen, onMobileClose }) {
                 </div>
                 {isMobile && (
                     <button onClick={onMobileClose}
+                        aria-label="Close sidebar"
                         className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
                         <X size={18} />
                     </button>

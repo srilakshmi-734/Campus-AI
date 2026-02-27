@@ -43,6 +43,11 @@
     padding: 0;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
+
   body {
     font-family: 'Inter', 'Outfit', system-ui, sans-serif;
     background: var(--bg-primary);

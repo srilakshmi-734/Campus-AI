@@ -6,10 +6,10 @@ import { Save, School, Bell, Globe } from 'lucide-react';
 export default function AdminSettings() {
     const { t } = useTranslation();
     const [form, setForm] = useState({
-        collegeName: 'Anna University – CEG',
+        collegeName: 'Campus University – COE',
         address: 'Sardar Patel Road, Guindy, Chennai – 600025',
         phone: '+91-44-22359159',
-        email: 'admin@annauniv.edu',
+        email: 'admin@campusuniv.edu',
         semester: '5',
         smsCredits: '5000',
     });

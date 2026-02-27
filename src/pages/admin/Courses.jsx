@@ -40,16 +40,20 @@ export default function AdminCourses() {
             </motion.div>
 
             {/* Filters */}
-            <div className="glass-card p-4 flex flex-wrap gap-3">
-                <div className="flex items-center gap-2 flex-1 min-w-[180px]">
-                    <Search size={15} className="text-[var(--text-muted)]" />
+            <div className="glass-card p-3 flex flex-col lg:flex-row items-stretch lg:items-center gap-4 border border-white/5 shadow-xl">
+                <div className="flex items-center gap-3 px-4 py-2 glass-card border border-white/10 flex-1 max-w-xl">
+                    <Search size={18} className="text-violet-400" />
                     <input value={search} onChange={e => setSearch(e.target.value)}
-                        placeholder="Search courses..." className="glass-input text-sm" />
+                        placeholder="Search by course name or code..."
+                        className="bg-transparent text-sm w-full focus:outline-none placeholder:text-white/20" />
                 </div>
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-2 flex-wrap items-center">
+                    <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest mr-2">Filter by Department:</span>
                     {['All', 'CSE', 'ECE', 'Mech', 'IT'].map(d => (
                         <button key={d} onClick={() => setDeptFilter(d)}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${deptFilter === d ? 'text-white' : 'glass-card text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${deptFilter === d
+                                ? 'text-white border-transparent shadow-lg shadow-violet-500/20'
+                                : 'glass-card text-[var(--text-muted)] hover:text-white border-white/5 hover:border-white/20'
                                 }`}
                             style={deptFilter === d ? { background: 'var(--gradient)' } : {}}>
                             {d}
@@ -59,53 +63,67 @@ export default function AdminCourses() {
             </div>
 
             {/* Course Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
                 {filtered.map((c, i) => (
                     <motion.div key={c.code}
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.07 }}
-                        whileHover={{ y: -3 }}
-                        className="glass-card p-5 space-y-3"
+                        transition={{ delay: i * 0.05 }}
+                        whileHover={{ y: -5, scale: 1.01 }}
+                        className="glass-card p-6 space-y-5 border border-white/5 hover:border-white/10 shadow-lg hover:shadow-2xl transition-all group"
                     >
                         <div className="flex items-start justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-                                    style={{ background: 'rgba(124,58,237,0.15)' }}>
-                                    <BookOpen size={18} className="text-violet-400" />
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 shadow-inner"
+                                    style={{ background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.2)' }}>
+                                    <BookOpen size={22} className="text-violet-400" />
                                 </div>
                                 <div>
-                                    <p className="font-bold text-sm">{c.name}</p>
-                                    <p className="text-xs text-[var(--text-muted)]">{c.code} · {c.credits} Credits</p>
+                                    <p className="font-extrabold text-sm tracking-tight">{c.name}</p>
+                                    <p className="text-[11px] font-bold text-violet-400 mt-0.5">{c.code} <span className="text-white/20 mx-1">|</span> {c.credits} Credits</p>
                                 </div>
                             </div>
-                            <span className="badge badge-violet">{c.dept}</span>
+                            <span className="badge badge-violet text-[10px] shadow-sm uppercase">{c.dept}</span>
                         </div>
 
-                        <div className="flex items-center justify-between text-xs text-[var(--text-muted)]">
-                            <span>👨‍💼 {c.faculty}</span>
-                            <span>👥 {c.enrolled} enrolled</span>
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-white/2 border border-white/5">
+                            <div className="text-center flex-1">
+                                <p className="text-[10px] text-[var(--text-muted)] uppercase font-bold tracking-wider mb-0.5">Faculty</p>
+                                <p className="text-xs font-semibold">{c.faculty}</p>
+                            </div>
+                            <div className="w-px h-8 bg-white/10" />
+                            <div className="text-center flex-1">
+                                <p className="text-[10px] text-[var(--text-muted)] uppercase font-bold tracking-wider mb-0.5">Enrolled</p>
+                                <p className="text-xs font-semibold">{c.enrolled}</p>
+                            </div>
                         </div>
 
-                        <div>
-                            <div className="flex justify-between text-xs mb-1">
-                                <span className="text-[var(--text-muted)]">Syllabus Coverage</span>
-                                <span className="font-semibold" style={{
+                        <div className="space-y-2">
+                            <div className="flex justify-between text-[11px] font-bold">
+                                <span className="text-[var(--text-muted)] uppercase tracking-wider">Syllabus Completion</span>
+                                <span className="tabular-nums" style={{
                                     color: c.syllabus >= 80 ? '#10b981' : c.syllabus >= 60 ? '#fbbf24' : '#ef4444'
                                 }}>{c.syllabus}%</span>
                             </div>
-                            <div className="progress-bar">
-                                <motion.div className="progress-fill"
+                            <div className="progress-bar h-2 bg-white/5 border border-white/5">
+                                <motion.div className="progress-fill shadow-lg"
                                     style={{ background: c.syllabus >= 80 ? '#10b981' : c.syllabus >= 60 ? '#fbbf24' : '#ef4444' }}
                                     initial={{ width: 0 }}
                                     animate={{ width: `${c.syllabus}%` }}
-                                    transition={{ duration: 0.8, delay: i * 0.07 }}
+                                    transition={{ duration: 1, delay: i * 0.05, ease: "easeOut" }}
                                 />
                             </div>
                         </div>
                     </motion.div>
                 ))}
             </div>
+            {filtered.length === 0 && (
+                <div className="py-20 text-center">
+                    <Search size={48} className="mx-auto text-white/5 mb-4" />
+                    <p className="text-[var(--text-muted)] text-lg font-medium italic underline underline-offset-8 decoration-white/5">No courses found matching your search</p>
+                </div>
+            )}
+
         </div>
     );
 }

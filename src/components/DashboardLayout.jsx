@@ -3,6 +3,8 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
+import AIChatbot from './AIChatbot';
+
 
 const SIDEBAR_FULL = 260;
 const SIDEBAR_COLLAPSED = 64;
@@ -65,6 +67,10 @@ export default function DashboardLayout() {
                     </motion.main>
                 </AnimatePresence>
             </div>
+
+            {/* AI Assistant */}
+            <AIChatbot />
         </div>
     );
 }
+
