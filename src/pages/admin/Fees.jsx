@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { CreditCard, AlertTriangle, CheckCircle, Send, Download, Search, TrendingUp } from 'lucide-react';
+import { CreditCard, AlertTriangle, CheckCircle, Send, Download, Search, TrendingUp, MessageSquare } from 'lucide-react';
 import { Reveal } from '../../components/Reveal';
 import { exportToCSV } from '../../utils/exportUtils';
 
@@ -120,6 +120,7 @@ export default function AdminFees() {
                                         <th className="text-left py-5 px-8 text-right">Outstanding Amount</th>
                                         <th className="text-left py-5 px-8">Deadline</th>
                                         <th className="text-left py-5 px-8 text-center">Status Alert</th>
+                                        <th className="text-left py-5 px-8 text-right">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
@@ -147,6 +148,11 @@ export default function AdminFees() {
                                                 <span className={`badge ${d.status === 'overdue' ? 'badge-red' : 'badge-yellow'} text-[10px] font-black uppercase tracking-widest px-4 shadow-sm`}>
                                                     {d.status === 'overdue' ? 'Overdue' : 'Due Soon'}
                                                 </span>
+                                            </td>
+                                            <td className="py-5 px-8 text-right">
+                                                <button className="p-2 rounded-xl bg-lemon-green/10 text-lemon-green hover:bg-lemon-green hover:text-engineering-black transition-all group/sms" title="Send SMS reminder">
+                                                    <MessageSquare size={14} className="group-hover/sms:scale-110" />
+                                                </button>
                                             </td>
                                         </motion.tr>
                                     ))}

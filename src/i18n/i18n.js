@@ -4,7 +4,7 @@ import { initReactI18next } from 'react-i18next';
 const resources = {
     en: {
         translation: {
-            // Sidebar
+            // Sidebar / Navigation
             dashboard: 'Dashboard',
             students: 'Students',
             faculty: 'Faculty',
@@ -14,6 +14,7 @@ const resources = {
             reports: 'Reports',
             resources: 'Resources',
             settings: 'Settings',
+            feesLabs: 'Fees & Labs',
 
             // Auth
             login: 'Login',
@@ -25,26 +26,38 @@ const resources = {
             admin: 'Admin',
             student: 'Student',
             loginTitle: 'Welcome Back',
-            loginSubtitle: 'Sign in to CampusAI Hub',
+            loginSubtitle: 'Sign in to your account',
             signupTitle: 'Create Account',
-            signupSubtitle: 'Join CampusAI Hub',
+            signupSubtitle: 'Join the campus community',
             noAccount: "Don't have an account?",
             haveAccount: 'Already have an account?',
             logout: 'Logout',
 
-            // Dashboard
+            // Dashboard Specific
             totalStudents: 'Total Students',
             totalFaculty: 'Total Faculty',
             activeCourses: 'Active Courses',
-            avgAttendance: 'Avg Attendance',
+            avgAttendance: 'Average Attendance',
             feesCollected: 'Fees Collected',
             pendingFees: 'Pending Fees',
             myAttendance: 'My Attendance',
             myCourses: 'My Courses',
             myFees: 'My Fees',
-            welcomeAdmin: 'Welcome, Admin',
+            welcomeAdmin: 'Welcome, Administrator',
             welcomeStudent: 'Welcome, Student',
+            semesterProgress: 'Semester Progress',
+            dailySchedule: 'Class Schedule',
+            noticeFeed: 'Campus Notifications',
+            quickDirectory: 'Campus Directory',
             overview: 'Overview',
+            activelabs: 'Active Labs',
+            hodActions: 'HOD Actions',
+            syllabus: 'Syllabus',
+            labAttendance: 'Lab Attendance',
+            nirfMetrics: 'Institutional Performance',
+            placementCharts: 'Placement Trends',
+            workshopBookings: 'Workshop Bookings',
+            defaulters: 'Fee Defaulters',
 
             // Common
             search: 'Search...',
@@ -67,6 +80,39 @@ const resources = {
             percent: '%',
             active: 'Active',
             inactive: 'Inactive',
+            welcome: 'Welcome, Dean of Engineering',
+        },
+    },
+    hi: {
+        translation: {
+            dashboard: 'इंजीनियरिंग डैशबोर्ड',
+            students: 'बी.टेक छात्र',
+            feesLabs: 'फीस और लैब',
+            attendance: 'लैब उपस्थिति',
+            reports: 'एनआईआरएफ रिपोर्ट',
+            resources: 'सीएडी संसाधन',
+            settings: 'सिस्टम सेटिंग्स',
+            totalStudents: 'कुल बी.टेक प्रवेश',
+            feesCollected: 'लैब फीस राजस्व',
+            avgAttendance: 'अन्ना विवि औसत उपस्थिति',
+            activelabs: 'सक्रिय सीएडी लैब',
+            hodActions: 'HOD कार्रवाई आइटम',
+            syllabus: 'बी.टेक सिलेबस',
+            labAttendance: 'लैब उपस्थिति',
+            nirfMetrics: 'एनआईआरएफ प्रदर्शन मेट्रिक्स',
+            placementCharts: 'बी.टेक प्लेसमेंट रुझान',
+            workshopBookings: 'कार्यशाला बुकिंग',
+            defaulters: 'शुल्क चूककर्ता',
+            search: 'बी.टेक डीबी खोजें...',
+            filter: 'विभाग द्वारा फ़िल्टर करें',
+            export: 'निर्यात (पीडीएफ/सीएडी)',
+            status: 'स्थिति',
+            actions: 'कार्रवाई',
+            dept: 'विभाग',
+            semester: 'सेमेस्टर',
+            id: 'पंजीकरण संख्या',
+            welcome: 'स्वागत है, इंजीनियरिंग के डीन',
+            logout: 'लॉगआउट (इंजीनियरिंग शैल)',
         },
     },
     ta: {
@@ -81,6 +127,7 @@ const resources = {
             reports: 'அறிக்கைகள்',
             resources: 'வளங்கள்',
             settings: 'அமைப்புகள்',
+            feesLabs: 'கட்டணம் மற்றும் ஆய்வகங்கள்',
 
             // Auth
             login: 'உள்நுழை',
@@ -112,6 +159,14 @@ const resources = {
             welcomeAdmin: 'வரவேற்கிறோம், நிர்வாகி',
             welcomeStudent: 'வரவேற்கிறோம், மாணவர்',
             overview: 'சுருக்கம்',
+            activelabs: 'செயல் சிஏடி ஆய்வகங்கள்',
+            hodActions: 'துறைத் தலைவர் செயல்கள்',
+            syllabus: 'பி.டெக் பாடத்திட்டம்',
+            labAttendance: 'லேப் வருகை',
+            nirfMetrics: 'என்.ஐ.ஆர்.எப் செயல்திறன்',
+            placementCharts: 'பி.டெக் வேலைவாய்ப்பு போக்குகள்',
+            workshopBookings: 'பணிமனை முன்பதிவு',
+            defaulters: 'கட்டண பாக்கி வைத்துள்ளவர்கள்',
 
             // Common
             search: 'தேடு...',
@@ -134,6 +189,7 @@ const resources = {
             percent: '%',
             active: 'செயலில்',
             inactive: 'செயலற்ற',
+            welcome: 'வரவேற்கிறோம், பொறியியல் டீன்',
         },
     },
 };

@@ -2,10 +2,10 @@ export const studentDetails = {
     name: 'Arjun Raghav',
     dept: 'Computer Science & Engineering',
     sem: 5,
-    enrollmentId: 'CU2021CSE084',
+    enrollmentId: 'EU2021CSE084',
     batch: '2021-2025',
     admissionDate: '12 Aug 2021',
-    college: 'Campus University – COE'
+    college: 'Engineering University – COE'
 };
 
 export const studentStats = [
@@ -42,7 +42,7 @@ export const studentNotices = [
 ];
 
 export const campusDirectory = [
-    { role: 'HOD - CSE', name: 'Dr. K. Murugavel', email: 'hod.cse@campusuniv.edu', phone: '+91 98400 12345' },
-    { role: 'Exam Cell', name: 'Admin Office', email: 'exams@campusuniv.edu', phone: '044-2235 7890' },
-    { role: 'Library', name: 'Central Lib', email: 'lib@campusuniv.edu', phone: '044-2235 1122' },
+    { role: 'HOD - CSE', name: 'Dr. K. Murugavel', email: 'hod.cse@engineeringuniv.edu', phone: '+91 98400 12345' },
+    { role: 'Exam Cell', name: 'Admin Office', email: 'exams@engineeringuniv.edu', phone: '044-2235 7890' },
+    { role: 'Library', name: 'Central Lib', email: 'lib@engineeringuniv.edu', phone: '044-2235 1122' },
 ];

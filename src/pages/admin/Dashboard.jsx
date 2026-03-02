@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import {
     Users, GraduationCap, BookOpen, CalendarCheck,
     CreditCard, TrendingUp, AlertTriangle, CheckCircle,
-    BarChart3, Zap,
+    BarChart3, Zap, MessageSquare,
 } from 'lucide-react';
 
 const stats = [
@@ -44,7 +44,7 @@ export default function AdminDashboard() {
                 <motion.div variants={item} initial="hidden" animate="show">
                     <h1 className="text-2xl font-bold gradient-text">{t('welcomeAdmin')} 👋</h1>
                     <p className="text-sm text-[var(--text-muted)] mt-1">
-                        Campus University – College of Excellence
+                        Engineering University – College of Excellence
                     </p>
                 </motion.div>
             </Reveal>
@@ -78,6 +78,39 @@ export default function AdminDashboard() {
                 </motion.div>
             </Reveal>
 
+
+            {/* Defaulter Control Node */}
+            <Reveal width="100%" delay={0.4}>
+                <motion.div variants={item} initial="hidden" animate="show" className="glass-card p-8 border-red-500/10 bg-red-500/5 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-red-500/5 to-transparent rounded-bl-full -mr-32 -mt-32 group-hover:scale-110 transition-transform duration-1000" />
+
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative z-10">
+                        <div className="flex items-center gap-6">
+                            <div className="w-16 h-16 rounded-2xl bg-red-500/10 flex items-center justify-center border border-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.1)]">
+                                <AlertTriangle size={32} className="text-red-500" />
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-black tracking-tight text-white uppercase italic">Defaulter Control <span className="text-red-500">Node</span></h2>
+                                <p className="text-[10px] text-red-500/50 font-black tracking-[0.3em] uppercase mt-1">Institutional Revenue Protection Protocol</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-12">
+                            <div className="text-center">
+                                <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-1">Critical Overdue</p>
+                                <p className="text-2xl font-black text-white italic">12 <span className="text-xs text-red-500 not-italic">Students</span></p>
+                            </div>
+                            <div className="text-center border-x border-white/5 px-12">
+                                <p className="text-[10px] font-black text-white/40 uppercase tracking-widest mb-1">Total Outstanding</p>
+                                <p className="text-2xl font-black text-lemon-green italic">₹4.2L</p>
+                            </div>
+                            <button className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-red-500 text-white font-black text-[10px] uppercase tracking-widest shadow-[0_0_30px_rgba(239,68,68,0.3)] hover:scale-105 transition-all group">
+                                <MessageSquare size={16} className="group-hover:animate-bounce" /> Broadcast SMS Reminder
+                            </button>
+                        </div>
+                    </div>
+                </motion.div>
+            </Reveal>
 
             {/* Bottom Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

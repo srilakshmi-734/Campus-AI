@@ -1,7 +1,17 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Star, Plus, Mail } from 'lucide-react';
+import {
+    Star,
+    Plus,
+    Mail,
+    Search,
+    Filter,
+    MoreVertical,
+    GraduationCap,
+    ExternalLink,
+    Zap
+} from 'lucide-react';
 
 const faculty = [
     { id: 'F001', name: 'Dr. K. Murugavel', dept: 'CSE', designation: 'Professor & HOD', classes: 4, rating: 4.8, exp: 18 },
@@ -10,104 +20,144 @@ const faculty = [
     { id: 'F004', name: 'Dr. Sunita Rao', dept: 'CSE', designation: 'Professor', classes: 3, rating: 4.9, exp: 22 },
     { id: 'F005', name: 'Mr. Arun Durai', dept: 'IT', designation: 'Assistant Prof.', classes: 5, rating: 4.1, exp: 4 },
     { id: 'F006', name: 'Dr. Kavitha Selvi', dept: 'ECE', designation: 'Associate Prof.', classes: 4, rating: 4.7, exp: 15 },
-    { id: 'F007', name: 'Mr. Vijay Kumar', dept: 'Civil', 'designation': 'Assistant Prof.', classes: 6, rating: 3.9, exp: 3 },
+    { id: 'F007', name: 'Mr. Vijay Kumar', dept: 'Civil', designation: 'Assistant Prof.', classes: 6, rating: 3.9, exp: 3 },
     { id: 'F008', name: 'Dr. Meena Rajan', dept: 'Mech', designation: 'Professor & HOD', classes: 3, rating: 4.6, exp: 20 },
 ];
 
 export default function AdminFaculty() {
     const { t } = useTranslation();
     const [filter, setFilter] = useState('All');
+    const [searchTerm, setSearchTerm] = useState('');
 
-    const filtered = faculty.filter(f => filter === 'All' || f.dept === filter);
+    const filtered = faculty.filter(f =>
+        (filter === 'All' || f.dept === filter) &&
+        (f.name.toLowerCase().includes(searchTerm.toLowerCase()) || f.id.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
 
     return (
-        <div className="space-y-5">
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-xl font-bold gradient-text">{t('faculty')}</h1>
-                    <p className="text-xs text-[var(--text-muted)]">{filtered.length} faculty members</p>
+                    <h2 className="text-4xl font-black tracking-tighter text-engineering-white mb-2 uppercase">
+                        FACULTY <span className="text-lemon-green italic">REGISTRY</span>
+                    </h2>
+                    <div className="flex items-center gap-4 text-xs font-bold text-engineering-white/40 uppercase tracking-widest">
+                        <span className="flex items-center gap-2 pt-1">
+                            <GraduationCap size={14} className="text-lemon-green" />
+                            {filtered.length} ACTIVE INTELLECTS
+                        </span>
+                        <span>Session: 2026-EVEN</span>
+                    </div>
                 </div>
-                <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                    className="btn-gradient flex items-center gap-2 text-sm px-4 py-2">
-                    <Plus size={16} /> Add Faculty
-                </motion.button>
-            </motion.div>
-
-            {/* Dept filter chips */}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 0.1 } }}
-                className="glass-card p-3 flex flex-wrap items-center gap-3 border border-white/5 shadow-lg">
-                <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest px-2">Filter Department:</span>
-                {['All', 'CSE', 'ECE', 'Mech', 'Civil', 'IT'].map(d => (
-                    <button key={d} onClick={() => setFilter(d)}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${filter === d
-                            ? 'text-white border-transparent shadow-lg shadow-violet-500/20'
-                            : 'glass-card text-[var(--text-muted)] hover:text-white border-white/5 hover:border-white/20'
-                            }`}
-                        style={filter === d ? { background: 'var(--gradient)' } : {}}>
-                        {d}
+                <div className="flex gap-2">
+                    <button className="flex items-center gap-2 px-4 py-2 bg-lemon-green text-engineering-black text-[10px] font-bold uppercase tracking-widest hover:shadow-[0_0_20px_rgba(188,240,0,0.4)] transition-all">
+                        <Plus size={14} /> Onboard Faculty
                     </button>
-                ))}
-            </motion.div>
+                </div>
+            </div>
 
-            {/* Faculty Cards */}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 0.15 } }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-                {filtered.map((f, i) => (
-                    <motion.div key={f.id}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.05 }}
-                        whileHover={{ y: -8, scale: 1.02 }}
-                        className="glass-card p-6 space-y-5 border border-white/5 hover:border-white/10 shadow-lg hover:shadow-2xl transition-all group relative overflow-hidden"
-                    >
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rounded-bl-full -mr-12 -mt-12 group-hover:scale-110 transition-transform" />
-
-                        {/* Avatar & Header */}
-                        <div className="flex flex-col items-center text-center gap-4 relative z-10">
-                            <div className="w-20 h-20 rounded-2xl p-0.5 shadow-2xl relative"
-                                style={{ background: 'var(--gradient)' }}>
-                                <div className="w-full h-full rounded-[14px] bg-[#1a1c2c] flex items-center justify-center text-2xl font-black text-white group-hover:scale-95 transition-transform overflow-hidden">
-                                    <span className="relative z-10">{f.name.split(' ').map(n => n.startsWith('Dr.') || n.startsWith('Mr.') ? '' : n[0]).join('')}</span>
-                                    <div className="absolute inset-0 bg-gradient-to-tr from-violet-500/10 to-transparent" />
-                                </div>
-                                <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-green-500 border-2 border-[#1a1c2c] shadow-lg shadow-green-500/20" />
-                            </div>
-                            <div>
-                                <p className="font-black text-base tracking-tight leading-tight group-hover:text-violet-400 transition-colors uppercase">{f.name}</p>
-                                <p className="text-[10px] font-black text-violet-400 uppercase tracking-widest mt-1 opacity-80">{f.designation}</p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-center gap-2 relative z-10">
-                            <span className="badge badge-blue text-[10px] shadow-sm tracking-tighter capitalize">{f.dept} Dept</span>
-                            <span className="text-[10px] font-bold text-[var(--text-muted)] bg-white/5 px-2 py-0.5 rounded-md border border-white/10">{f.exp} Years Exp</span>
-                        </div>
-
-                        <div className="flex items-center justify-around p-3 rounded-2xl bg-white/2 border border-white/5 relative z-10">
-                            <div className="text-center">
-                                <p className="text-[9px] text-[var(--text-muted)] uppercase font-bold tracking-widest mb-0.5">Classes</p>
-                                <p className="text-sm font-black">{f.classes}</p>
-                            </div>
-                            <div className="w-px h-6 bg-white/10" />
-                            <div className="text-center">
-                                <p className="text-[9px] text-[var(--text-muted)] uppercase font-bold tracking-widest mb-0.5">Rating</p>
-                                <div className="flex items-center gap-1 justify-center">
-                                    <Star size={12} className="text-yellow-400 fill-yellow-400" />
-                                    <span className="text-sm font-black italic">{f.rating}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-black uppercase tracking-widest
-                            border border-white/10 hover:border-violet-500/50 hover:bg-violet-500/10
-                            text-[var(--text-muted)] hover:text-white transition-all shadow-lg active:scale-95">
-                            <Mail size={14} className="group-hover:rotate-12 transition-transform" /> Contact
+            {/* Filters & Search */}
+            <div className="engineering-glass p-4 flex flex-col md:flex-row gap-4 items-center">
+                <div className="relative flex-1 w-full">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-engineering-white/30" size={18} />
+                    <input
+                        type="text"
+                        placeholder="Search Research Scholars / Professors..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full bg-white/5 border border-white/10 rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-lemon-green/50 text-engineering-white font-bold italic"
+                    />
+                </div>
+                <div className="flex gap-2 w-full md:w-auto overflow-x-auto no-scrollbar pb-2 md:pb-0">
+                    {['All', 'CSE', 'ECE', 'Mech', 'Civil', 'IT'].map(d => (
+                        <button
+                            key={d}
+                            onClick={() => setFilter(d)}
+                            className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border whitespace-nowrap ${filter === d
+                                    ? 'bg-lemon-green text-engineering-black border-lemon-green'
+                                    : 'bg-white/5 text-engineering-white/40 border-white/10 hover:border-white/20'
+                                }`}
+                        >
+                            {d}
                         </button>
+                    ))}
+                    <button className="p-2 engineering-glass border-none bg-white/5 hover:bg-white/10">
+                        <Filter size={18} className="text-lemon-green" />
+                    </button>
+                </div>
+            </div>
+
+            {/* Faculty Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {filtered.map((f, i) => (
+                    <motion.div
+                        key={f.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        whileHover={{ y: -8 }}
+                        className="engineering-glass p-6 group transition-all relative overflow-hidden"
+                    >
+                        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                            <Zap size={60} className="text-lemon-green" />
+                        </div>
+
+                        {/* Card Header */}
+                        <div className="flex items-start justify-between mb-6">
+                            <div className="flex flex-col">
+                                <span className="text-[9px] font-black text-lemon-green bg-lemon-green/10 px-2 py-0.5 rounded w-fit uppercase tracking-widest mb-2">{f.id}</span>
+                                <h3 className="text-lg font-black text-engineering-white tracking-tighter uppercase leading-tight group-hover:text-lemon-green transition-colors">{f.name}</h3>
+                                <p className="text-[10px] font-bold text-engineering-white/40 uppercase tracking-widest mt-1">{f.designation}</p>
+                            </div>
+                            <button className="text-engineering-white/20 hover:text-lemon-green transition-colors">
+                                <MoreVertical size={18} />
+                            </button>
+                        </div>
+
+                        {/* Stats Row */}
+                        <div className="grid grid-cols-3 gap-2 mb-6">
+                            <div className="bg-white/5 p-2 rounded-lg">
+                                <p className="text-[8px] text-engineering-white/30 uppercase font-black mb-1">Rank</p>
+                                <div className="flex items-center gap-1">
+                                    <Star size={10} className="text-lemon-green fill-lemon-green" />
+                                    <span className="text-xs font-black italic text-engineering-white">{f.rating}</span>
+                                </div>
+                            </div>
+                            <div className="bg-white/5 p-2 rounded-lg">
+                                <p className="text-[8px] text-engineering-white/30 uppercase font-black mb-1">XP</p>
+                                <p className="text-xs font-black italic text-engineering-white">{f.exp}Y</p>
+                            </div>
+                            <div className="bg-white/5 p-2 rounded-lg">
+                                <p className="text-[8px] text-engineering-white/30 uppercase font-black mb-1">Nodes</p>
+                                <p className="text-xs font-black italic text-engineering-white">{f.classes}</p>
+                            </div>
+                        </div>
+
+                        {/* Dept Badge */}
+                        <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                            <span className="text-[10px] font-black text-engineering-white/60 tracking-[0.2em]">{f.dept} DIVISION</span>
+                            <div className="flex gap-2">
+                                <button className="p-2 bg-white/5 rounded-lg hover:bg-lemon-green hover:text-engineering-black transition-all">
+                                    <Mail size={14} />
+                                </button>
+                                <button className="p-2 bg-white/5 rounded-lg hover:bg-lemon-green hover:text-engineering-black transition-all">
+                                    <ExternalLink size={14} />
+                                </button>
+                            </div>
+                        </div>
                     </motion.div>
                 ))}
-            </motion.div>
+            </div>
 
+            {/* Records Footer */}
+            <div className="flex items-center justify-between px-6 py-4 engineering-glass bg-white/5 border-white/10">
+                <span className="text-[10px] font-bold text-engineering-white/30 uppercase tracking-[0.4em]">Integrated Academic Intelligence Unit • v4.0.2</span>
+                <span className="text-[10px] font-black text-lemon-green uppercase tracking-widest italic flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-lemon-green animate-pulse" />
+                    All nodes operational
+                </span>
+            </div>
         </div>
     );
 }

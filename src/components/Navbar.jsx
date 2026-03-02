@@ -203,9 +203,9 @@ export default function Navbar({ onMenuToggle, sidebarCollapsed, onSidebarToggle
                                     {notifications.length > 0 ? notifications.map(n => (
                                         <div key={n.id} className={`flex items-start gap-3 px-4 py-3 hover:bg-white/5 cursor-pointer transition-colors border-b border-white/5 last:border-0 ${n.read ? 'opacity-40' : ''}`}>
                                             <div className={`w-2 h-2 mt-1.5 rounded-full shrink-0 shadow-sm ${n.type === 'warn' ? 'bg-amber-400 shadow-amber-400/50' :
-                                                    n.type === 'danger' ? 'bg-rose-500 shadow-rose-500/50' :
-                                                        n.type === 'success' ? 'bg-emerald-400 shadow-emerald-400/50' :
-                                                            'bg-sky-400 shadow-sky-400/50'
+                                                n.type === 'danger' ? 'bg-rose-500 shadow-rose-500/50' :
+                                                    n.type === 'success' ? 'bg-emerald-400 shadow-emerald-400/50' :
+                                                        'bg-sky-400 shadow-sky-400/50'
                                                 }`} />
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-[11px] font-medium text-[var(--text-primary)] leading-relaxed">{n.text}</p>
@@ -241,7 +241,7 @@ export default function Navbar({ onMenuToggle, sidebarCollapsed, onSidebarToggle
                     </div>
                     <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
                         style={{ background: 'linear-gradient(135deg, #7c3aed, #f97316)' }}>
-                        {userName.charAt(0).toUpperCase()}
+                        {userName?.charAt(0).toUpperCase()}
                     </div>
                     <motion.button whileTap={{ scale: 0.88 }} onClick={handleLogout} title="Logout"
                         className="p-1.5 rounded-lg hover:bg-red-500/15 text-[var(--text-muted)] hover:text-red-400 transition-colors">

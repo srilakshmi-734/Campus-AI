@@ -1,28 +1,30 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
-import { Brain, Eye, EyeOff, ShieldCheck, GraduationCap, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Brain, Eye, EyeOff, ShieldCheck, GraduationCap, ArrowRight, ArrowLeft, Zap, Shield, Fingerprint } from 'lucide-react';
 
 const roleConfig = {
     admin: {
-        label: 'Administrator',
+        label: 'Institutional Admin',
         Icon: ShieldCheck,
-        color: '#7c3aed',
-        gradient: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
-        glow: 'rgba(124,58,237,0.5)',
-        placeholder: 'admin@campus.edu',
-        namePlaceholder: 'Dr. John Smith',
+        color: '#BCF000',
+        gradient: 'linear-gradient(135deg, #BCF000 0%, #8FB600 100%)',
+        glow: 'rgba(188,240,0,0.3)',
+        placeholder: 'admin@engineering.edu',
+        namePlaceholder: 'Full Name',
+        node: 'ADMIN-PORTAL'
     },
     student: {
-        label: 'Student',
+        label: 'Engineering Student',
         Icon: GraduationCap,
-        color: '#f97316',
-        gradient: 'linear-gradient(135deg, #f97316 0%, #ef4444 100%)',
-        glow: 'rgba(249,115,22,0.5)',
-        placeholder: 'student@campus.edu',
-        namePlaceholder: 'Arjun Kumar',
+        color: '#BCF000',
+        gradient: 'linear-gradient(135deg, #F5F5F5 0%, #A3A3A3 100%)',
+        glow: 'rgba(255,255,255,0.2)',
+        placeholder: 'student@engineering.edu',
+        namePlaceholder: 'Full Name',
+        node: 'STUDENT-PORTAL'
     },
 };
 
@@ -46,88 +48,75 @@ export default function AuthPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        if (mode === 'signup' && !name.trim()) { setError('Please enter your full name.'); return; }
-        if (!email.trim()) { setError('Please enter your email.'); return; }
-        if (password.length < 4) { setError('Password must be at least 4 characters.'); return; }
+        if (mode === 'signup' && !name.trim()) { setError('Validator: Name is required.'); return; }
+        if (!email.trim()) { setError('Validator: Email is required.'); return; }
+        if (password.length < 4) { setError('Validator: Password must be at least 4 characters.'); return; }
 
         setLoading(true);
-        await new Promise(r => setTimeout(r, 600));
-        const displayName = mode === 'signup' ? name.trim() : config.label;
+        await new Promise(r => setTimeout(r, 800));
+
+        // Use the name from the input if it's signup or if we have it, 
+        // otherwise fall back to the email prefix or role label
+        const displayName = name.trim() || email.split('@')[0].toUpperCase() || config.label;
+
         login({ role: roleParam, name: displayName });
         navigate(roleParam === 'admin' ? '/admin/dashboard' : '/student/dashboard');
     };
 
     return (
-        <div className="min-h-screen flex relative overflow-hidden"
-            style={{
-                background: 'radial-gradient(ellipse at top left, rgba(124,58,237,0.2) 0%, transparent 50%), radial-gradient(ellipse at bottom right, rgba(249,115,22,0.15) 0%, transparent 50%), linear-gradient(160deg, #07051a 0%, #110a2e 40%, #0d0820 100%)',
-            }}>
+        <div className="min-h-screen flex relative overflow-hidden bg-engineering-black text-engineering-white font-outfit">
+            {/* Background Layer */}
+            <div
+                className="fixed inset-0 z-0 bg-cover bg-center brightness-[0.2] saturate-[0.8] opacity-40 scale-105"
+                style={{ backgroundImage: `url('/campus-bg.png')` }}
+            />
+            <div className="fixed inset-0 z-0 bg-gradient-to-br from-engineering-black via-transparent to-engineering-black/80 pointer-events-none" />
 
-            {/* Floating orbs */}
-            <motion.div animate={{ y: [-20, 20, -20] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute top-10 right-1/4 w-56 h-56 rounded-full blur-3xl opacity-15"
-                style={{ background: `radial-gradient(circle, ${config.color}, transparent)` }} />
-            <motion.div animate={{ y: [20, -20, 20] }} transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute bottom-10 left-1/4 w-72 h-72 rounded-full blur-3xl opacity-10"
-                style={{ background: 'radial-gradient(circle, #3b82f6, transparent)' }} />
-
-            {/* Left Panel – branding */}
-            <div className="hidden lg:flex lg:w-[45%] flex-col items-center justify-center p-12 relative">
-                {/* Decorative background lines */}
-                <div className="absolute inset-0 opacity-5"
+            {/* Left Panel – Asset Showcase */}
+            <div className="hidden lg:flex lg:w-[45%] flex-col items-center justify-center p-20 relative z-10 border-r border-white/5">
+                <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
                     style={{
-                        backgroundImage: 'linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)',
-                        backgroundSize: '40px 40px',
+                        backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
+                        backgroundSize: '32px 32px',
                     }} />
 
                 <motion.div
-                    initial={{ opacity: 0, x: -30 }}
+                    initial={{ opacity: 0, x: -40 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="relative z-10 text-center"
+                    transition={{ duration: 0.8 }}
+                    className="relative text-center"
                 >
-                    {/* Brand logo */}
                     <motion.div
-                        animate={{ rotate: [0, 8, -8, 0] }}
-                        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-                        className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl"
-                        style={{ background: config.gradient, boxShadow: `0 20px 60px ${config.glow}` }}
+                        animate={{ y: [0, -10, 0] }}
+                        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                        className="w-24 h-24 rounded-[2rem] bg-lemon-green flex items-center justify-center mx-auto mb-10 shadow-[0_0_50px_rgba(188,240,0,0.3)]"
                     >
-                        <Brain size={40} className="text-white" />
+                        <Brain size={48} className="text-engineering-black" />
                     </motion.div>
 
-                    <h1 className="text-4xl font-black text-white mb-2 tracking-tight">
-                        Campus<span style={{
-                            background: 'linear-gradient(135deg, #a78bfa, #fb923c)',
-                            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-                        }}>AI</span> Hub
+                    <h1 className="text-5xl font-black text-white mb-4 tracking-tighter uppercase italic leading-none">
+                        Campus<span className="text-lemon-green italic">AI</span> Hub
                     </h1>
-                    <p className="text-gray-400 mb-10 text-sm">AI-Powered Campus Management</p>
+                    <p className="text-lemon-green/50 mb-12 text-[10px] font-black uppercase tracking-[0.5em] italic">Campus Management System</p>
 
-                    {/* Role pill */}
-                    <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full mb-10 text-white text-sm font-semibold"
-                        style={{ background: config.gradient, boxShadow: `0 8px 30px ${config.glow}` }}>
-                        <config.Icon size={16} />
+                    <div className="inline-flex items-center gap-3 px-6 py-3 rounded-xl mb-12 bg-white/5 border border-white/10 text-white text-xs font-black uppercase tracking-[0.2em] italic shadow-2xl backdrop-blur-md">
+                        <config.Icon size={16} className="text-lemon-green" />
                         {config.label} Portal
                     </div>
 
-                    {/* Feature bullets */}
-                    <div className="space-y-3 text-left max-w-xs mx-auto">
+                    <div className="space-y-4 text-left max-w-sm mx-auto p-8 rounded-3xl bg-white/[0.02] border border-white/5 backdrop-blur-xl">
                         {(roleParam === 'admin'
-                            ? ['Full institutional dashboard', 'Student & faculty management', 'Attendance & fee analytics', 'Reports & resource management']
-                            : ['Personal academic overview', 'Course & attendance tracking', 'Fee payment status', 'Lab & library resources']
+                            ? ['Cloud Synchronization', 'Asset Management', 'Fee Management', 'Policy Controls']
+                            : ['Academic Records', 'Lab Access', 'Fee Portal', 'Knowledge Base']
                         ).map((f, i) => (
                             <motion.div key={f}
-                                initial={{ opacity: 0, x: -15 }}
+                                initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.3 + i * 0.1 }}
-                                className="flex items-center gap-3 text-sm text-gray-300"
+                                transition={{ delay: 0.4 + i * 0.1 }}
+                                className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-engineering-white/40 italic group hover:text-white transition-colors"
                             >
-                                <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
-                                    style={{ background: config.gradient }}>
-                                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                                        <path d="M2 5l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
+                                <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 bg-lemon-green/10 text-lemon-green">
+                                    <Zap size={10} />
                                 </div>
                                 {f}
                             </motion.div>
@@ -136,180 +125,115 @@ export default function AuthPage() {
                 </motion.div>
             </div>
 
-            {/* Divider */}
-            <div className="hidden lg:block w-px self-stretch my-12"
-                style={{ background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.1), transparent)' }} />
-
-            {/* Right Panel – Form */}
-            <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12">
+            {/* Right Panel – Access Form */}
+            <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12 relative z-10">
                 <motion.div
-                    initial={{ opacity: 0, y: 20, scale: 0.97 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5 }}
                     className="w-full max-w-md"
                 >
-                    {/* Back to role select */}
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 0.2 } }} className="mb-6">
-                        <Link to="/" className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors group">
-                            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                            Choose different role
-                        </Link>
-                    </motion.div>
+                    {/* Return Link */}
+                    <Link to="/" className="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-engineering-white/40 hover:text-lemon-green transition-all group mb-10 italic">
+                        <ArrowLeft size={14} className="group-hover:-translate-x-2 transition-transform" />
+                        Go Back
+                    </Link>
 
-                    {/* Mode tabs */}
-                    <div className="flex rounded-2xl overflow-hidden p-1 mb-8"
-                        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                        {['login', 'signup'].map(m => (
-                            <button key={m} onClick={() => { setMode(m); setError(''); }}
-                                className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-250"
-                                style={mode === m
-                                    ? { background: config.gradient, color: '#fff', boxShadow: `0 4px 15px ${config.glow}` }
-                                    : { color: 'rgba(255,255,255,0.4)' }}>
-                                {m === 'login' ? 'Sign In' : 'Sign Up'}
-                            </button>
-                        ))}
-                    </div>
+                    <div className="engineering-glass p-8 md:p-10 border-white/10 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none">
+                            <Fingerprint size={100} className="text-lemon-green" />
+                        </div>
 
-                    {/* Role badge (mobile only) */}
-                    <div className="lg:hidden flex items-center gap-2 mb-6 px-3 py-2 rounded-xl w-fit"
-                        style={{ background: `${config.color}20`, border: `1px solid ${config.color}40` }}>
-                        <config.Icon size={15} style={{ color: config.color }} />
-                        <span className="text-sm font-semibold" style={{ color: config.color }}>{config.label} Portal</span>
-                    </div>
+                        {/* Mode Toggle */}
+                        <div className="flex bg-white/5 p-1.5 rounded-2xl mb-10 border border-white/10">
+                            {['login', 'signup'].map(m => (
+                                <button key={m} onClick={() => { setMode(m); setError(''); }}
+                                    className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${mode === m
+                                        ? 'bg-lemon-green text-engineering-black shadow-[0_5px_20px_rgba(188,240,0,0.3)]'
+                                        : 'text-engineering-white/40 hover:text-white'}`}>
+                                    {m === 'login' ? 'Login' : 'Sign Up'}
+                                </button>
+                            ))}
+                        </div>
 
-                    {/* Heading */}
-                    <AnimatePresence mode="wait">
-                        <motion.div key={mode}
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -8 }}
-                            transition={{ duration: 0.2 }}
-                            className="mb-7"
-                        >
-                            <h2 className="text-2xl font-bold text-white">
-                                {mode === 'login' ? 'Welcome back 👋' : 'Create account'}
+                        {/* Heading */}
+                        <div className="mb-10">
+                            <h2 className="text-3xl font-black text-white uppercase tracking-tighter italic">
+                                {mode === 'login' ? 'Login' : 'Create Account'}
                             </h2>
-                            <p className="text-sm text-gray-400 mt-1">
-                                {mode === 'login'
-                                    ? `Sign in to your ${config.label.toLowerCase()} account`
-                                    : `Register as a ${config.label.toLowerCase()}`}
+                            <p className="text-[10px] font-bold text-engineering-white/30 uppercase tracking-[0.3em] mt-2 italic">
+                                Portal: <span className="text-lemon-green">{config.node}</span>
                             </p>
-                        </motion.div>
-                    </AnimatePresence>
+                        </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        {/* Name */}
-                        <AnimatePresence>
-                            {mode === 'signup' && (
-                                <motion.div
-                                    initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-                                    animate={{ opacity: 1, height: 'auto', marginBottom: 16 }}
-                                    exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-                                    transition={{ duration: 0.25 }}
-                                >
-                                    <label className="block text-xs text-gray-400 mb-2 font-medium uppercase tracking-wider">Full Name</label>
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-[9px] font-black text-engineering-white/40 uppercase tracking-[0.3em] italic">Your Full Name</label>
+                                <div className="relative">
                                     <input type="text" value={name} onChange={e => setName(e.target.value)}
                                         placeholder={config.namePlaceholder}
-                                        className="w-full px-4 py-3 rounded-xl text-sm text-white outline-none transition-all duration-200"
-                                        style={{
-                                            background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
-                                            caretColor: config.color,
-                                        }}
-                                        onFocus={e => { e.target.style.border = `1px solid ${config.color}60`; e.target.style.boxShadow = `0 0 0 3px ${config.color}15`; }}
-                                        onBlur={e => { e.target.style.border = '1px solid rgba(255,255,255,0.1)'; e.target.style.boxShadow = 'none'; }}
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-sm font-bold text-white outline-none focus:border-lemon-green focus:bg-white/10 transition-all italic"
                                     />
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
-
-                        {/* Email */}
-                        <div>
-                            <label className="block text-xs text-gray-400 mb-2 font-medium uppercase tracking-wider">Email</label>
-                            <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                                placeholder={config.placeholder}
-                                className="w-full px-4 py-3 rounded-xl text-sm text-white outline-none transition-all duration-200"
-                                style={{
-                                    background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
-                                    caretColor: config.color,
-                                }}
-                                onFocus={e => { e.target.style.border = `1px solid ${config.color}60`; e.target.style.boxShadow = `0 0 0 3px ${config.color}15`; }}
-                                onBlur={e => { e.target.style.border = '1px solid rgba(255,255,255,0.1)'; e.target.style.boxShadow = 'none'; }}
-                            />
-                        </div>
-
-                        {/* Password */}
-                        <div>
-                            <label className="block text-xs text-gray-400 mb-2 font-medium uppercase tracking-wider">Password</label>
-                            <div className="relative">
-                                <input type={showPass ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)}
-                                    placeholder="••••••••"
-                                    className="w-full px-4 py-3 pr-11 rounded-xl text-sm text-white outline-none transition-all duration-200"
-                                    style={{
-                                        background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
-                                        caretColor: config.color,
-                                    }}
-                                    onFocus={e => { e.target.style.border = `1px solid ${config.color}60`; e.target.style.boxShadow = `0 0 0 3px ${config.color}15`; }}
-                                    onBlur={e => { e.target.style.border = '1px solid rgba(255,255,255,0.1)'; e.target.style.boxShadow = 'none'; }}
-                                />
-                                <button type="button" onClick={() => setShowPass(s => !s)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors">
-                                    {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                                </button>
+                                    <Shield className="absolute right-4 top-1/2 -translate-y-1/2 text-lemon-green/30" size={16} />
+                                </div>
                             </div>
-                        </div>
 
-                        {/* Error */}
-                        <AnimatePresence>
-                            {error && (
-                                <motion.p
-                                    initial={{ opacity: 0, y: -4 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -4 }}
-                                    className="text-red-400 text-xs bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2.5"
-                                >
-                                    ⚠ {error}
-                                </motion.p>
-                            )}
-                        </AnimatePresence>
+                            <div className="space-y-2">
+                                <label className="text-[9px] font-black text-engineering-white/40 uppercase tracking-[0.3em] italic">Email Address</label>
+                                <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                                    placeholder={config.placeholder}
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-sm font-bold text-white outline-none focus:border-lemon-green focus:bg-white/10 transition-all italic"
+                                />
+                            </div>
 
-                        {/* Submit */}
-                        <motion.button
-                            type="submit" disabled={loading}
-                            whileHover={{ scale: loading ? 1 : 1.02 }}
-                            whileTap={{ scale: loading ? 1 : 0.97 }}
-                            className="w-full py-3.5 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2 mt-2 transition-all"
-                            style={{
-                                background: loading ? `${config.color}60` : config.gradient,
-                                boxShadow: loading ? 'none' : `0 8px 30px ${config.glow}`,
-                            }}
-                        >
-                            {loading ? (
-                                <svg className="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="white" strokeWidth="4" />
-                                    <path className="opacity-75" fill="white" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                </svg>
-                            ) : (
-                                <>{mode === 'login' ? 'Sign In' : 'Create Account'} <ArrowRight size={17} /></>
-                            )}
-                        </motion.button>
-                    </form>
+                            <div className="space-y-2">
+                                <label className="text-[9px] font-black text-engineering-white/40 uppercase tracking-[0.3em] italic">Password</label>
+                                <div className="relative">
+                                    <input type={showPass ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)}
+                                        placeholder="••••••••"
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 pr-14 text-sm font-bold text-white outline-none focus:border-lemon-green focus:bg-white/10 transition-all"
+                                    />
+                                    <button type="button" onClick={() => setShowPass(s => !s)}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-engineering-white/20 hover:text-lemon-green transition-colors">
+                                        {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
+                                </div>
+                            </div>
 
-                    {/* Switch mode */}
-                    <p className="text-center text-xs text-gray-500 mt-5">
-                        {mode === 'login' ? "Don't have an account?" : 'Already have an account?'}{' '}
+                            {/* Error Flash */}
+                            <AnimatePresence>
+                                {error && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-[10px] font-black text-red-500 uppercase tracking-widest text-center italic"
+                                    >
+                                        [ERR] {error}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
+                            <motion.button
+                                type="submit" disabled={loading}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="w-full py-5 rounded-xl bg-white text-engineering-black font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl hover:bg-lemon-green transition-all flex items-center justify-center gap-3 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {loading ? (
+                                    <div className="w-5 h-5 border-2 border-engineering-black border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                    <>{mode === 'login' ? 'Sign In' : 'Create Account'} <ArrowRight size={18} /></>
+                                )}
+                            </motion.button>
+                        </form>
+                    </div>
+
+                    {/* Mode Link */}
+                    <div className="mt-8 text-center flex flex-col items-center gap-4">
                         <button onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError(''); }}
-                            className="font-semibold transition-colors hover:opacity-80"
-                            style={{ color: config.color }}>
-                            {mode === 'login' ? 'Sign Up' : 'Sign In'}
+                            className="text-[10px] font-black uppercase tracking-[0.2em] text-engineering-white/40 hover:text-lemon-green transition-colors italic">
+                            {mode === 'login' ? 'New here? Create an account' : 'Already have an account? Login'}
                         </button>
-                    </p>
-
-                    {/* Demo hint */}
-                    <div className="mt-6 p-3 rounded-xl text-center"
-                        style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
-                        <p className="text-[11px] text-gray-500">
-                            💡 Enter any email & password (4+ chars) to demo
-                        </p>
                     </div>
                 </motion.div>
             </div>
