@@ -39,24 +39,46 @@ export default function AuthPage() {
 
     const [mode, setMode] = useState('login');
     const [name, setName] = useState('');
+    const [uniqueId, setUniqueId] = useState('');
+    const [department, setDepartment] = useState('');
+    const [year, setYear] = useState('');
+    const [semester, setSemester] = useState('');
+    const [section, setSection] = useState('');
+    const [mobile, setMobile] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPass, setShowPass] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
+    const [agreeTerms, setAgreeTerms] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    const depts = ['Computer Science (CSE)', 'Electronics (ECE)', 'Mechanical (Mech)', 'Information Tech (IT)', 'Electrical (EEE)', 'Civil Engineering'];
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        if (mode === 'signup' && !name.trim()) { setError('Validator: Name is required.'); return; }
-        if (!email.trim()) { setError('Validator: Email is required.'); return; }
-        if (password.length < 4) { setError('Validator: Password must be at least 4 characters.'); return; }
+
+        // Basic Validation
+        if (!email.trim() || !email.includes('@')) { setError(t('invalidEmail')); return; }
+        if (password.length < 8) { setError(t('passwordWeak')); return; }
+
+        if (mode === 'signup') {
+            if (!name.trim()) { setError('Full Name is required.'); return; }
+            if (!uniqueId.trim()) { setError(`${roleParam === 'admin' ? t('employeeId') : t('studentId')} is required.`); return; }
+            if (!department) { setError('Please select a department.'); return; }
+            if (roleParam === 'student') {
+                if (!year) { setError('Please select your year of study.'); return; }
+                if (!semester) { setError('Please select your semester.'); return; }
+                if (!section) { setError('Please select your section.'); return; }
+                if (!mobile.trim() || mobile.length < 10) { setError('Please enter a valid 10-digit mobile number.'); return; }
+            }
+            if (!agreeTerms) { setError('You must agree to the Terms and Conditions.'); return; }
+        }
 
         setLoading(true);
         await new Promise(r => setTimeout(r, 800));
 
-        // Use the name from the input if it's signup or if we have it, 
-        // otherwise fall back to the email prefix or role label
         const displayName = name.trim() || email.split('@')[0].toUpperCase() || config.label;
 
         login({ role: roleParam, name: displayName });
@@ -166,38 +188,154 @@ export default function AuthPage() {
                             </p>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <div className="space-y-2">
-                                <label className="text-[9px] font-black text-engineering-white/40 uppercase tracking-[0.3em] italic">Your Full Name</label>
-                                <div className="relative">
-                                    <input type="text" value={name} onChange={e => setName(e.target.value)}
-                                        placeholder={config.namePlaceholder}
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-sm font-bold text-white outline-none focus:border-lemon-green focus:bg-white/10 transition-all italic"
-                                    />
-                                    <Shield className="absolute right-4 top-1/2 -translate-y-1/2 text-lemon-green/30" size={16} />
-                                </div>
-                            </div>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <AnimatePresence mode="wait">
+                                {mode === 'signup' ? (
+                                    <motion.div
+                                        key="signup-fields"
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: 'auto' }}
+                                        exit={{ opacity: 0, height: 0 }}
+                                        className="space-y-4"
+                                    >
+                                        <div className="space-y-1">
+                                            <label className="text-[9px] font-black text-engineering-white/40 uppercase tracking-[0.3em] italic">{t('name')}</label>
+                                            <div className="relative">
+                                                <input type="text" value={name} onChange={e => setName(e.target.value)}
+                                                    placeholder={config.namePlaceholder}
+                                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none focus:border-lemon-green focus:bg-white/10 transition-all italic"
+                                                />
+                                                <Shield className="absolute right-4 top-1/2 -translate-y-1/2 text-lemon-green/30" size={16} />
+                                            </div>
+                                        </div>
 
-                            <div className="space-y-2">
-                                <label className="text-[9px] font-black text-engineering-white/40 uppercase tracking-[0.3em] italic">Email Address</label>
+                                        <div className="space-y-1">
+                                            <label className="text-[9px] font-black text-engineering-white/40 uppercase tracking-[0.3em] italic">
+                                                {roleParam === 'admin' ? t('employeeId') : t('studentId')}
+                                            </label>
+                                            <input type="text" value={uniqueId} onChange={e => setUniqueId(e.target.value)}
+                                                placeholder={roleParam === 'admin' ? 'EMP-XXXX' : 'EU-CSE-XXX'}
+                                                className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none focus:border-lemon-green focus:bg-white/10 transition-all italic"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-1">
+                                            <label className="text-[9px] font-black text-engineering-white/40 uppercase tracking-[0.3em] italic">{t('department')}</label>
+                                            <select value={department} onChange={e => setDepartment(e.target.value)}
+                                                className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none focus:border-lemon-green focus:bg-white/10 transition-all italic appearance-none"
+                                            >
+                                                <option value="" disabled className="bg-engineering-black">Select Department</option>
+                                                {depts.map(d => <option key={d} value={d} className="bg-engineering-black">{d}</option>)}
+                                            </select>
+                                        </div>
+
+                                        {roleParam === 'student' && (
+                                            <>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] font-black text-engineering-white/40 uppercase tracking-[0.3em] italic">{t('yearOfStudy')}</label>
+                                                        <select value={year} onChange={e => setYear(e.target.value)}
+                                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none focus:border-lemon-green focus:bg-white/10 transition-all italic appearance-none"
+                                                        >
+                                                            <option value="" disabled className="bg-engineering-black">Year</option>
+                                                            {['1st Year', '2nd Year', '3rd Year', '4th Year'].map(y => <option key={y} value={y} className="bg-engineering-black">{y}</option>)}
+                                                        </select>
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] font-black text-engineering-white/40 uppercase tracking-[0.3em] italic">{t('semester')}</label>
+                                                        <select value={semester} onChange={e => setSemester(e.target.value)}
+                                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none focus:border-lemon-green focus:bg-white/10 transition-all italic appearance-none"
+                                                        >
+                                                            <option value="" disabled className="bg-engineering-black">Sem</option>
+                                                            {[1, 2, 3, 4, 5, 6, 7, 8].map(s => <option key={s} value={s} className="bg-engineering-black">Sem {s}</option>)}
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] font-black text-engineering-white/40 uppercase tracking-[0.3em] italic">{t('section')}</label>
+                                                        <select value={section} onChange={e => setSection(e.target.value)}
+                                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none focus:border-lemon-green focus:bg-white/10 transition-all italic appearance-none"
+                                                        >
+                                                            <option value="" disabled className="bg-engineering-black">Section</option>
+                                                            {['A', 'B', 'C', 'D'].map(s => <option key={s} value={s} className="bg-engineering-black">Section {s}</option>)}
+                                                        </select>
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label className="text-[9px] font-black text-engineering-white/40 uppercase tracking-[0.3em] italic">{t('mobileNumber')}</label>
+                                                        <input type="text" value={mobile} onChange={e => setMobile(e.target.value.replace(/\D/g, ''))}
+                                                            placeholder="99XXXXXXXX"
+                                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none focus:border-lemon-green focus:bg-white/10 transition-all italic"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )}
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        key="login-name"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        className="space-y-1"
+                                    >
+                                        <label className="text-[9px] font-black text-engineering-white/40 uppercase tracking-[0.3em] italic">{t('name')} (Session Name)</label>
+                                        <input type="text" value={name} onChange={e => setName(e.target.value)}
+                                            placeholder="Enter name for this session"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none focus:border-lemon-green focus:bg-white/10 transition-all italic"
+                                        />
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
+                            <div className="space-y-1">
+                                <label className="text-[9px] font-black text-engineering-white/40 uppercase tracking-[0.3em] italic">{t('email')}</label>
                                 <input type="email" value={email} onChange={e => setEmail(e.target.value)}
                                     placeholder={config.placeholder}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-sm font-bold text-white outline-none focus:border-lemon-green focus:bg-white/10 transition-all italic"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 text-sm font-bold text-white outline-none focus:border-lemon-green focus:bg-white/10 transition-all italic"
                                 />
                             </div>
 
-                            <div className="space-y-2">
-                                <label className="text-[9px] font-black text-engineering-white/40 uppercase tracking-[0.3em] italic">Password</label>
+                            <div className="space-y-1">
+                                <div className="flex justify-between items-center">
+                                    <label className="text-[9px] font-black text-engineering-white/40 uppercase tracking-[0.3em] italic">{t('password')}</label>
+                                    {mode === 'login' && (
+                                        <button type="button" className="text-[9px] font-bold text-lemon-green/60 hover:text-lemon-green uppercase tracking-widest transition-colors">
+                                            {t('forgotPassword')}
+                                        </button>
+                                    )}
+                                </div>
                                 <div className="relative">
                                     <input type={showPass ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)}
                                         placeholder="••••••••"
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 pr-14 text-sm font-bold text-white outline-none focus:border-lemon-green focus:bg-white/10 transition-all"
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-3.5 pr-14 text-sm font-bold text-white outline-none focus:border-lemon-green focus:bg-white/10 transition-all"
                                     />
                                     <button type="button" onClick={() => setShowPass(s => !s)}
                                         className="absolute right-4 top-1/2 -translate-y-1/2 text-engineering-white/20 hover:text-lemon-green transition-colors">
                                         {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
                                     </button>
                                 </div>
+                            </div>
+
+                            <div className="flex items-center justify-between py-2">
+                                {mode === 'login' ? (
+                                    <label className="flex items-center gap-3 cursor-pointer group">
+                                        <input type="checkbox" checked={rememberMe} onChange={e => setRememberMe(e.target.checked)} className="hidden" />
+                                        <div className={`w-5 h-5 rounded-lg border-2 transition-all flex items-center justify-center ${rememberMe ? 'bg-lemon-green border-lemon-green' : 'border-white/10 bg-white/5 group-hover:border-lemon-green/50'}`}>
+                                            {rememberMe && <Shield size={12} className="text-engineering-black" />}
+                                        </div>
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-engineering-white/40 group-hover:text-engineering-white transition-colors">{t('rememberMe')}</span>
+                                    </label>
+                                ) : (
+                                    <label className="flex items-center gap-3 cursor-pointer group">
+                                        <input type="checkbox" checked={agreeTerms} onChange={e => setAgreeTerms(e.target.checked)} className="hidden" />
+                                        <div className={`w-5 h-5 rounded-lg border-2 transition-all flex items-center justify-center ${agreeTerms ? 'bg-lemon-green border-lemon-green' : 'border-white/10 bg-white/5 group-hover:border-lemon-green/50'}`}>
+                                            {agreeTerms && <Shield size={12} className="text-engineering-black" />}
+                                        </div>
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-engineering-white/40 group-hover:text-engineering-white transition-colors">{t('agreeTerms')}</span>
+                                    </label>
+                                )}
                             </div>
 
                             {/* Error Flash */}

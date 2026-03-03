@@ -8,7 +8,8 @@ import {
     ArrowUpRight,
     Zap,
     ShieldCheck,
-    ChevronRight
+    ChevronRight,
+    Cpu
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import {
