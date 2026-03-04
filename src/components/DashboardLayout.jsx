@@ -48,7 +48,7 @@ const DashboardLayout = () => {
             <div className="fixed bottom-10 right-10 z-50">
                 <button
                     onClick={() => setIsChatOpen(!isChatOpen)}
-                    className="p-5 bg-lemon-green text-engineering-black rounded-3xl shadow-[0_0_40px_rgba(188,240,0,0.3)] hover:scale-110 transition-transform group"
+                    className="p-5 bg-lemon-green text-engineering-black rounded-3xl shadow-lg hover:scale-110 transition-transform group"
                 >
                     <MessageSquare size={24} className="group-hover:rotate-12 transition-transform" />
                 </button>
@@ -59,7 +59,7 @@ const DashboardLayout = () => {
                             initial={{ opacity: 0, y: 30, scale: 0.9 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 30, scale: 0.9 }}
-                            className="absolute bottom-20 right-0 w-80 engineering-glass p-6 border-lemon-green/30 rounded-[2.5rem]"
+                            className="absolute bottom-20 right-0 w-80 bg-[#121212] border border-white/10 shadow-xl p-6 rounded-[2.5rem]"
                         >
                             <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
                                 <div className="flex items-center gap-3">
@@ -68,7 +68,7 @@ const DashboardLayout = () => {
                                 </div>
                             </div>
                             <div className="space-y-4 h-56 overflow-y-auto mb-6 text-[11px] text-engineering-white/70 no-scrollbar font-bold uppercase tracking-tight italic">
-                                <div className="engineering-glass p-4 bg-white/5 border-none rounded-2xl">
+                                <div className="bg-[#1a1a1a] p-4 border border-white/10 text-gray-200 rounded-2xl">
                                     Status: Connected. How can I assist you today?
                                 </div>
                             </div>
@@ -76,7 +76,7 @@ const DashboardLayout = () => {
                                 <input
                                     type="text"
                                     placeholder="Ask something..."
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 px-4 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:border-lemon-green/50 text-white placeholder:text-white/20"
+                                    className="w-full bg-[#0f0f0f] border border-white/10 rounded-2xl py-3 px-4 text-[10px] font-black uppercase tracking-widest focus:outline-none focus:border-lemon-green/50 text-white placeholder:text-gray-500"
                                 />
                             </div>
                         </motion.div>
@@ -102,7 +102,7 @@ const DashboardLayout = () => {
                 <div className="flex items-center gap-8">
                     <button
                         onClick={() => setIsChatOpen(!isChatOpen)}
-                        className="flex items-center gap-3 px-4 py-2 rounded-xl bg-lemon-green/10 border border-lemon-green/20 hover:bg-lemon-green/20 transition-all group"
+                        className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all group"
                     >
                         <Brain size={16} className="text-lemon-green group-hover:scale-110 transition-transform" />
                         <span className="text-[10px] font-black uppercase tracking-widest text-lemon-green">AI Assistant</span>
