@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
+import api from '../services/apiService';
 import { Brain, Eye, EyeOff, ShieldCheck, GraduationCap, ArrowRight, ArrowLeft, Zap, Shield, Fingerprint } from 'lucide-react';
 
 const roleConfig = {
@@ -59,7 +60,6 @@ export default function AuthPage() {
         e.preventDefault();
         setError('');
 
-        // Basic Validation
         if (!email.trim() || !email.includes('@')) { setError(t('invalidEmail')); return; }
         if (password.length < 8) { setError(t('passwordWeak')); return; }
 
@@ -77,24 +77,81 @@ export default function AuthPage() {
         }
 
         setLoading(true);
-        await new Promise(r => setTimeout(r, 800));
 
-        const displayName = name.trim() || email.split('@')[0].toUpperCase() || config.label;
+        try {
+            let endpoint = "";
+            let payload = { email, password };
 
-        login({ role: roleParam, name: displayName });
-        navigate(roleParam === 'admin' ? '/admin/dashboard' : '/student/dashboard');
+            if (mode === 'signup') {
+                endpoint = roleParam === 'admin' ? `/api/admin/register` : `/api/student/register`;
+                payload.name = name;
+            } else {
+                endpoint = roleParam === 'admin' ? `/api/admin/login` : `/api/student/login`;
+            }
+
+            const response = await api.post(endpoint, payload);
+
+            if (mode === 'login') {
+                // User manual edit indicated response.data.data.access_token
+                const token = response.data.data?.access_token || response.data.access_token;
+                const backendRole = response.data.data?.role || response.data.role;
+
+                localStorage.setItem('campusai_token', token);
+                localStorage.setItem('campusai_role', backendRole);
+
+                try {
+                    const profileRes = await api.get('/api/auth/me');
+                    const user = profileRes.data.data || profileRes.data;
+                    const userRole = user.role ? user.role.toLowerCase() : (backendRole || roleParam).toLowerCase();
+
+                    login({
+                        token,
+                        role: userRole,
+                        name: name.trim(),
+                        email: user.email || email
+                    });
+
+                    navigate(userRole === 'admin' ? '/admin/dashboard' : '/student/dashboard');
+                } catch (profileErr) {
+                    console.error("Profile fetch failed:", profileErr);
+                    const finalRole = (backendRole || roleParam).toLowerCase();
+                    login({
+                        token,
+                        role: finalRole,
+                        name: name.trim(),
+                        email: email
+                    });
+                    navigate(finalRole === 'admin' ? '/admin/dashboard' : '/student/dashboard');
+                }
+            } else {
+                setMode('login');
+                setError('');
+            }
+        } catch (err) {
+            if (mode === 'login') {
+                if (err.response?.status === 401) {
+                    setError('Invalid email or password');
+                } else if (!err.response) {
+                    setError('Unable to connect to server');
+                } else {
+                    setError('Authentication failed');
+                }
+            } else {
+                setError(err.response?.data?.detail || err.message || 'Registration failed');
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
         <div className="min-h-screen flex relative overflow-hidden bg-engineering-black text-engineering-white font-outfit">
-            {/* Background Layer */}
             <div
                 className="fixed inset-0 z-0 bg-cover bg-center brightness-[0.2] saturate-[0.8] opacity-40 scale-105"
                 style={{ backgroundImage: `url('/campus-bg.png')` }}
             />
             <div className="fixed inset-0 z-0 bg-gradient-to-br from-engineering-black via-transparent to-engineering-black/80 pointer-events-none" />
 
-            {/* Left Panel – Asset Showcase */}
             <div className="hidden lg:flex lg:w-[45%] flex-col items-center justify-center p-20 relative z-10 border-r border-white/5">
                 <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
                     style={{
@@ -147,7 +204,6 @@ export default function AuthPage() {
                 </motion.div>
             </div>
 
-            {/* Right Panel – Access Form */}
             <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12 relative z-10">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
@@ -155,7 +211,6 @@ export default function AuthPage() {
                     transition={{ duration: 0.5 }}
                     className="w-full max-w-md"
                 >
-                    {/* Return Link */}
                     <Link to="/" className="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-engineering-white/40 hover:text-lemon-green transition-all group mb-10 italic">
                         <ArrowLeft size={14} className="group-hover:-translate-x-2 transition-transform" />
                         Go Back
@@ -166,7 +221,6 @@ export default function AuthPage() {
                             <Fingerprint size={100} className="text-lemon-green" />
                         </div>
 
-                        {/* Mode Toggle */}
                         <div className="flex bg-white/5 p-1.5 rounded-2xl mb-10 border border-white/10">
                             {['login', 'signup'].map(m => (
                                 <button key={m} onClick={() => { setMode(m); setError(''); }}
@@ -178,7 +232,6 @@ export default function AuthPage() {
                             ))}
                         </div>
 
-                        {/* Heading */}
                         <div className="mb-10">
                             <h2 className="text-3xl font-black text-white uppercase tracking-tighter italic">
                                 {mode === 'login' ? 'Login' : 'Create Account'}
@@ -338,7 +391,6 @@ export default function AuthPage() {
                                 )}
                             </div>
 
-                            {/* Error Flash */}
                             <AnimatePresence>
                                 {error && (
                                     <motion.div
@@ -358,7 +410,10 @@ export default function AuthPage() {
                                 className="w-full py-5 rounded-xl bg-white text-engineering-black font-black uppercase tracking-[0.3em] text-[10px] shadow-2xl hover:bg-lemon-green transition-all flex items-center justify-center gap-3 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {loading ? (
-                                    <div className="w-5 h-5 border-2 border-engineering-black border-t-transparent rounded-full animate-spin" />
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-4 h-4 border-2 border-engineering-black border-t-transparent rounded-full animate-spin" />
+                                        <span>{mode === 'login' ? 'Signing in...' : 'Processing...'}</span>
+                                    </div>
                                 ) : (
                                     <>{mode === 'login' ? 'Sign In' : 'Create Account'} <ArrowRight size={18} /></>
                                 )}
@@ -366,7 +421,6 @@ export default function AuthPage() {
                         </form>
                     </div>
 
-                    {/* Mode Link */}
                     <div className="mt-8 text-center flex flex-col items-center gap-4">
                         <button onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError(''); }}
                             className="text-[10px] font-black uppercase tracking-[0.2em] text-engineering-white/40 hover:text-lemon-green transition-colors italic">

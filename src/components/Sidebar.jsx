@@ -155,8 +155,9 @@ export default function Sidebar({ collapsed, setCollapsed, mobileOpen, onMobileC
                                 className="flex flex-col overflow-hidden"
                             >
                                 <span className="text-xs font-black text-white uppercase tracking-tighter italic truncate">
-                                    {userName || 'LAKSHMI'}
+                                    {userName ? userName.toUpperCase() : (role === 'admin' ? 'ADMIN' : 'STUDENT')}
                                 </span>
+
                                 <span className="text-[9px] font-black text-lemon-green uppercase tracking-widest leading-none mt-1">
                                     {role === 'admin' ? 'SYSTEM ADMIN' : '3RD YR • CSE'}
                                 </span>

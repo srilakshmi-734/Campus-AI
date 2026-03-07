@@ -59,20 +59,20 @@ const DashboardLayout = () => {
                             initial={{ opacity: 0, y: 30, scale: 0.9 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 30, scale: 0.9 }}
-                            className="absolute bottom-20 right-0 w-80 bg-[#121212] border border-white/10 shadow-xl p-6 rounded-[2.5rem]"
+                            className="fixed bottom-24 right-6 w-[40vw] h-[70vh] bg-black border border-white/10 rounded-2xl shadow-xl flex flex-col z-50"
                         >
-                            <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                            <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10 p-6">
                                 <div className="flex items-center gap-3">
                                     <div className="w-2.5 h-2.5 rounded-full bg-lemon-green animate-pulse" />
                                     <span className="font-black text-[10px] tracking-[0.3em] uppercase italic">Student Support</span>
                                 </div>
                             </div>
-                            <div className="space-y-4 h-56 overflow-y-auto mb-6 text-[11px] text-engineering-white/70 no-scrollbar font-bold uppercase tracking-tight italic">
+                            <div className="flex-1 overflow-y-auto text-sm space-y-3 p-4 no-scrollbar font-bold uppercase tracking-tight italic">
                                 <div className="bg-[#1a1a1a] p-4 border border-white/10 text-gray-200 rounded-2xl">
                                     Status: Connected. How can I assist you today?
                                 </div>
                             </div>
-                            <div className="relative">
+                            <div className="border-t border-white/10 p-3 flex gap-2">
                                 <input
                                     type="text"
                                     placeholder="Ask something..."

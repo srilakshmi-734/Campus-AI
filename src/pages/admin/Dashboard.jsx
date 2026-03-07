@@ -1,41 +1,36 @@
-import { motion } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
-import {
-    Users, GraduationCap, BookOpen, CalendarCheck,
-    CreditCard, TrendingUp, AlertTriangle, CheckCircle,
-    BarChart3, Zap, MessageSquare,
-} from 'lucide-react';
+import { useState, useEffect } from 'react';
+import api from '../../services/apiService';
 
-const stats = [
-    { label: 'totalStudents', value: '2,847', icon: Users, color: '#7c3aed', glow: 'stat-glow-violet', change: '+12%' },
-    { label: 'totalFaculty', value: '186', icon: GraduationCap, color: '#3b82f6', glow: 'stat-glow-blue', change: '+3%' },
-    { label: 'activeCourses', value: '64', icon: BookOpen, color: '#10b981', glow: 'stat-glow-green', change: '+8%' },
-    { label: 'avgAttendance', value: '82.4%', icon: CalendarCheck, color: '#f97316', glow: 'stat-glow-orange', change: '-1.2%' },
-    { label: 'feesCollected', value: '₹48.2L', icon: CreditCard, color: '#7c3aed', glow: 'stat-glow-violet', change: '+18%' },
-    { label: 'pendingFees', value: '₹12.5L', icon: AlertTriangle, color: '#ef4444', glow: 'stat-glow-orange', change: '-5%' },
-];
-
-const recentActivities = [
-    { text: 'New student Arjun R. enrolled in CSE', time: '5 min ago', type: 'success' },
-    { text: 'Lab booking approved for Prof. Meena', time: '12 min ago', type: 'info' },
-    { text: '3 students flagged for low attendance', time: '30 min ago', type: 'warn' },
-    { text: 'Fee reminder sent to 47 defaulters', time: '1 hr ago', type: 'info' },
-    { text: 'Semester exam schedule published', time: '2 hrs ago', type: 'success' },
-];
-
-const container = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.08 } },
-};
-const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
-};
-
-import { Reveal } from '../../components/Reveal';
-
+// ... (inside AdminDashboard)
 export default function AdminDashboard() {
     const { t } = useTranslation();
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchDashboard = async () => {
+            try {
+                const res = await api.get("/api/admin/dashboard");
+
+                console.log("Dashboard API Response:", res.data);
+
+                // Extract actual data from StandardResponse
+                setData(res.data.data);
+
+            } catch (err) {
+                console.error("Failed to fetch admin dashboard", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDashboard();
+    }, []);
+
+    const displayStats = data?.stats || [];
+    const displayActivities = data?.recentActivities || [];
+
+    if (loading) return <div className="p-10 text-center text-[var(--text-muted)]">Synthesizing System Data...</div>;
 
     return (
         <div className="space-y-6">
@@ -55,26 +50,32 @@ export default function AdminDashboard() {
                     variants={container} initial="hidden" animate="show"
                     className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5"
                 >
-                    {stats.map(({ label, value, icon: Icon, color, glow, change }) => (
-                        <motion.div key={label} variants={item}
-                            whileHover={{ y: -5, scale: 1.02 }}
-                            className={`glass-card p-6 ${glow} cursor-default transition-all border border-white/5 relative overflow-hidden group`}
-                        >
-                            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rounded-bl-full -mr-10 -mt-10 group-hover:scale-110 transition-transform" />
-                            <div className="flex items-start justify-between mb-4 relative z-10">
-                                <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg"
-                                    style={{ background: `${color}15`, border: `1px solid ${color}30` }}>
-                                    <Icon size={24} style={{ color }} />
+                    {displayStats.map(({ label, value, icon: IconName, color, glow, change }) => {
+                        const Icon = {
+                            Users, GraduationCap, BookOpen, CalendarCheck,
+                            CreditCard, AlertTriangle
+                        }[IconName] || Zap;
+                        return (
+                            <motion.div key={label} variants={item}
+                                whileHover={{ y: -5, scale: 1.02 }}
+                                className={`glass-card p-6 ${glow} cursor-default transition-all border border-white/5 relative overflow-hidden group`}
+                            >
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rounded-bl-full -mr-10 -mt-10 group-hover:scale-110 transition-transform" />
+                                <div className="flex items-start justify-between mb-4 relative z-10">
+                                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg"
+                                        style={{ background: `${color}15`, border: `1px solid ${color}30` }}>
+                                        <Icon size={24} style={{ color }} />
+                                    </div>
+                                    <span className={`text-[10px] font-bold px-2 py-1 rounded-lg border shadow-sm ${change?.startsWith('+') ? 'text-green-400 bg-green-400/5 border-green-400/20' : 'text-red-400 bg-red-400/5 border-red-400/20'
+                                        }`}>
+                                        {change}
+                                    </span>
                                 </div>
-                                <span className={`text-[10px] font-bold px-2 py-1 rounded-lg border shadow-sm ${change.startsWith('+') ? 'text-green-400 bg-green-400/5 border-green-400/20' : 'text-red-400 bg-red-400/5 border-red-400/20'
-                                    }`}>
-                                    {change}
-                                </span>
-                            </div>
-                            <p className="text-3xl font-black text-[var(--text-primary)] tracking-tight">{value}</p>
-                            <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest mt-2">{t(label)}</p>
-                        </motion.div>
-                    ))}
+                                <p className="text-3xl font-black text-[var(--text-primary)] tracking-tight">{value}</p>
+                                <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-widest mt-2">{t(label)}</p>
+                            </motion.div>
+                        );
+                    })}
                 </motion.div>
             </Reveal>
 
